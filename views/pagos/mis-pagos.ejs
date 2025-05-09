@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Pagos - Mis Pagos</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <!-- Barra de navegación -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand" href="/dashboard">Sistema de Pagos</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard"><i class="bi bi-house-fill"></i> Inicio</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="/pagos/mis-pagos"><i class="bi bi-cash-coin"></i> Mis Pagos</a>
+          </li>
+          <% if (user && user.rol === 'admin') { %>
+          <li class="nav-item">
+            <a class="nav-link" href="/pagos/registrar"><i class="bi bi-plus-circle-fill"></i> Registrar Pago</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/pagos"><i class="bi bi-list-check"></i> Todos los Pagos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/pagos/estado"><i class="bi bi-graph-up"></i> Estado de Pagos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/usuarios"><i class="bi bi-people-fill"></i> Usuarios</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/usuarios/registro"><i class="bi bi-person-plus-fill"></i> Registrar Usuario</a>
+          </li>
+          <% } %>
+        </ul>
+        <ul class="navbar-nav">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle"></i> <%= user.nombre %>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="/logout"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <div class="container mt-4">
+    <!-- Mensajes flash -->
+    <% if(success_msg != '') { %>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <%= success_msg %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% } %>
+
+    <% if(error_msg != '') { %>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <%= error_msg %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% } %>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2><i class="bi bi-cash-coin"></i> Mis Pagos Semanales</h2>
+      <% if (user && user.rol === 'admin') { %>
+      <a href="/pagos/registrar" class="btn btn-primary">
+        <i class="bi bi-plus-circle-fill"></i> Registrar Pago
+      </a>
+      <% } %>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <% if(pagos.length > 0) { %>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th>Semana</th>
+                  <th>Año</th>
+                  <th>Fecha</th>
+                  <th>Monto</th>
+                  <th>Estado</th>
+                  <th>Registrado por</th>
+                  <th>Comentario</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% pagos.forEach(function(pago) { %>
+                  <tr class="<%= !pago.pagado ? 'table-danger' : '' %>">
+                    <td><%= pago.semana %></td>
+                    <td><%= pago.año %></td>
+                    <td><%= pago.fecha.toLocaleDateString() %></td>
+                    <td>$<%= pago.monto.toLocaleString() %></td>
+                    <td>
+                      <span class="badge <%= pago.pagado ? 'bg-success' : 'bg-danger' %>">
+                        <%= pago.pagado ? 'Pagado' : 'Pendiente' %>
+                      </span>
+                    </td>
+                    <td><%= pago.registradoPor ? pago.registradoPor.nombre : 'Sistema' %></td>
+                    <td><%= pago.comentario %></td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } else { %>
+          <div class="alert alert-info">
+            <i class="bi bi-info-circle-fill"></i> No tienes pagos registrados en el sistema.
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-light text-center text-muted py-3 mt-5">
+    <div class="container">
+      Sistema de Gestión de Pagos Semanales &copy; <%= new Date().getFullYear() %>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

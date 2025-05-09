@@ -1,0 +1,77 @@
+/* Estilos generales */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
+}
+
+/* Estilos para la barra de navegación */
+.navbar {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+  font-weight: bold;
+}
+
+/* Estilos para las tarjetas */
+.card {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.card-header {
+  border-radius: 8px 8px 0 0 !important;
+}
+
+/* Estilos para las tablas */
+.table th {
+  font-weight: 600;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(0, 123, 255, 0.05);
+}
+
+/* Estilos para los botones */
+.btn {
+  border-radius: 5px;
+  padding: 8px 16px;
+}
+
+.btn-sm {
+  padding: 4px 8px;
+}
+
+/* Estilos para los iconos */
+.bi {
+  margin-right: 5px;
+}
+
+/* Estilos para los formularios */
+.form-control, .form-select {
+  border-radius: 5px;
+  padding: 10px;
+}
+
+/* Estilos para los badges */
+.badge {
+  padding: 6px 10px;
+  border-radius: 4px;
+}
+
+/* Estilos para el footer */
+footer {
+  border-top: 1px solid #e9ecef;
+}
+
+/* Estilos para la página de login */
+.login-card {
+  max-width: 400px;
+  margin: 100px auto;
+}
+
+/* Estilos para resaltar filas con pagos pendientes */
+.table-danger {
+  background-color: rgba(220, 53, 69, 0.1) !important;
+}

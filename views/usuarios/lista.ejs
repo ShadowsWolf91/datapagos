@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Pagos - Lista de Usuarios</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <!-- Barra de navegación -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand" href="/dashboard">Sistema de Pagos</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard"><i class="bi bi-house-fill"></i> Inicio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/pagos/mis-pagos"><i class="bi bi-cash-coin"></i> Mis Pagos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/pagos/registrar"><i class="bi bi-plus-circle-fill"></i> Registrar Pago</a>
+          </li>
+          <% if (user && user.rol === 'admin') { %>
+            <li class="nav-item">
+              <a class="nav-link" href="/pagos"><i class="bi bi-list-check"></i> Todos los Pagos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/pagos/estado"><i class="bi bi-graph-up"></i> Estado de Pagos</a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="/usuarios"><i class="bi bi-people-fill"></i> Usuarios</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/usuarios/registro"><i class="bi bi-person-plus-fill"></i> Registrar Usuario</a>
+            </li>
+          <% } %>
+        </ul>
+        <ul class="navbar-nav">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle"></i> <%= user.nombre %>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="/logout"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <div class="container mt-4">
+    <!-- Mensajes flash -->
+    <% if(success_msg != '') { %>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <%= success_msg %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% } %>
+
+    <% if(error_msg != '') { %>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <%= error_msg %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% } %>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2><i class="bi bi-people-fill"></i> Gestión de Usuarios</h2>
+      <a href="/usuarios/registro" class="btn btn-primary">
+        <i class="bi bi-person-plus-fill"></i> Nuevo Usuario
+      </a>
+    </div>
+
+    <!-- Barra de búsqueda y filtros -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-8">
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-search"></i></span>
+              <input type="text" id="searchInput" class="form-control" placeholder="Buscar usuario...">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <select id="filterSelect" class="form-select">
+              <option value="-1">Buscar en todas las columnas</option>
+              <option value="0">Por Nombre</option>
+              <option value="1">Por Email</option>
+              <option value="2">Por Rol</option>
+              <option value="3">Por Fecha de Registro</option>
+            </select>
+          </div>
+        </div>
+        <div id="noResultsMessage" class="alert alert-info mt-3" style="display: none;">
+          <i class="bi bi-info-circle-fill"></i> No se encontraron resultados para la búsqueda.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <% if(usuarios.length > 0) { %>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th>Nombre</th>
+                  <th>Email</th>
+                  <th>Rol</th>
+                  <th>Fecha de Registro</th>
+                  <th>Pagos por Semana</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% usuarios.forEach(function(usuario) { %>
+                  <tr>
+                    <td><%= usuario.nombre %></td>
+                    <td><%= usuario.email %></td>
+                    <td>
+                      <span class="badge <%= usuario.rol === 'admin' ? 'bg-danger' : 'bg-primary' %>">
+                        <%= usuario.rol === 'admin' ? 'Administrador' : 'Usuario Estándar' %>
+                      </span>
+                    </td>
+                    <td><%= usuario.fechaRegistro.toLocaleDateString() %></td>
+                    <td>
+                      <% if (totalesPorUsuario && totalesPorUsuario[usuario._id.toString()]) { %>
+                        <div class="dropdown">
+                          <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="dropdownPagos<%= usuario._id %>" data-bs-toggle="dropdown" aria-expanded="false">
+                            Ver pagos
+                          </button>
+                          <ul class="dropdown-menu" aria-labelledby="dropdownPagos<%= usuario._id %>">
+                            <% 
+                              const pagosUsuario = totalesPorUsuario[usuario._id.toString()];
+                              const semanas = Object.keys(pagosUsuario).sort((a, b) => b.localeCompare(a)); // Ordenar de más reciente a más antiguo
+                              
+                              if (semanas.length === 0) { %>
+                                <li><span class="dropdown-item text-muted">No hay pagos registrados</span></li>
+                            <% } else { 
+                                semanas.forEach(semana => { 
+                                  const [año, numSemana] = semana.split('-');
+                                  const datos = pagosUsuario[semana];
+                            %>
+                                <li>
+                                  <div class="dropdown-item">
+                                    <div class="d-flex justify-content-between">
+                                      <span>Semana <%= numSemana %>/<%= año %>:</span>
+                                      <span class="ms-2 <%= datos.pagado === datos.total ? 'text-success' : 'text-danger' %>">
+                                        $<%= datos.pagado.toLocaleString() %>/$<%= datos.total.toLocaleString() %>
+                                      </span>
+                                    </div>
+                                  </div>
+                                </li>
+                            <% }); } %>
+                          </ul>
+                        </div>
+                      <% } else { %>
+                        <span class="text-muted">Sin pagos</span>
+                      <% } %>
+                    </td>
+                    <td>
+                      <div class="btn-group" role="group">
+                        <a href="/usuarios/editar/<%= usuario._id %>" class="btn btn-sm btn-warning">
+                          <i class="bi bi-pencil-fill"></i>
+                        </a>
+                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#eliminarModal<%= usuario._id %>">
+                          <i class="bi bi-trash-fill"></i>
+                        </button>
+                      </div>
+
+                      <!-- Modal de confirmación para eliminar -->
+                      <div class="modal fade" id="eliminarModal<%= usuario._id %>" tabindex="-1" aria-labelledby="eliminarModalLabel<%= usuario._id %>" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header bg-danger text-white">
+                              <h5 class="modal-title" id="eliminarModalLabel<%= usuario._id %>">Confirmar Eliminación</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                              ¿Estás seguro de que deseas eliminar al usuario <strong><%= usuario.nombre %></strong>?
+                              <p class="text-danger mt-2">Esta acción no se puede deshacer y eliminará todos los pagos asociados a este usuario.</p>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                              <form action="/usuarios/<%= usuario._id %>?_method=DELETE" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } else { %>
+          <div class="alert alert-info">
+            <i class="bi bi-info-circle-fill"></i> No hay usuarios registrados en el sistema.
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-light text-center text-muted py-3 mt-5">
+    <div class="container">
+      Sistema de Gestión de Pagos Semanales &copy; <%= new Date().getFullYear() %>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/filtro-tablas.js"></script>
+</body>
+</html>

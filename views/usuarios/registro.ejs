@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Pagos - Registro de Usuario</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <!-- Barra de navegación -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand" href="/dashboard">Sistema de Pagos</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard"><i class="bi bi-house-fill"></i> Inicio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/pagos/mis-pagos"><i class="bi bi-cash-coin"></i> Mis Pagos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/pagos/registrar"><i class="bi bi-plus-circle-fill"></i> Registrar Pago</a>
+          </li>
+          <% if (user && user.rol === 'admin') { %>
+            <li class="nav-item">
+              <a class="nav-link" href="/pagos"><i class="bi bi-list-check"></i> Todos los Pagos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/pagos/estado"><i class="bi bi-graph-up"></i> Estado de Pagos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/usuarios"><i class="bi bi-people-fill"></i> Usuarios</a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="/usuarios/registro"><i class="bi bi-person-plus-fill"></i> Registrar Usuario</a>
+            </li>
+          <% } %>
+        </ul>
+        <ul class="navbar-nav">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle"></i> <%= user.nombre %>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="/logout"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <div class="container mt-4">
+    <!-- Mensajes flash -->
+    <% if(success_msg != '') { %>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <%= success_msg %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% } %>
+
+    <% if(error_msg != '') { %>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <%= error_msg %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% } %>
+
+    <!-- Mensajes de error de validación -->
+    <% if(typeof errors != 'undefined') { %>
+      <% errors.forEach(function(error) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <%= error.msg %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% }); %>
+    <% } %>
+
+    <div class="row">
+      <div class="col-md-8 mx-auto">
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            <h4><i class="bi bi-person-plus-fill"></i> Registrar Nuevo Usuario</h4>
+          </div>
+          <div class="card-body">
+            <form action="/usuarios/registro" method="POST">
+              <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre Completo</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" value="<%= typeof nombre != 'undefined' ? nombre : '' %>" required>
+              </div>
+              <div class="mb-3">
+                <label for="email" class="form-label">Correo Electrónico</label>
+                <input type="email" class="form-control" id="email" name="email" value="<%= typeof email != 'undefined' ? email : '' %>" required>
+              </div>
+              <div class="mb-3">
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+                <div class="form-text">La contraseña debe tener al menos 6 caracteres</div>
+              </div>
+              <div class="mb-3">
+                <label for="password2" class="form-label">Confirmar Contraseña</label>
+                <input type="password" class="form-control" id="password2" name="password2" required>
+              </div>
+              <div class="mb-3">
+                <label for="rol" class="form-label">Rol</label>
+                <select class="form-select" id="rol" name="rol">
+                  <option value="estandar" <%= typeof rol != 'undefined' && rol === 'estandar' ? 'selected' : '' %>>Usuario Estándar</option>
+                  <option value="admin" <%= typeof rol != 'undefined' && rol === 'admin' ? 'selected' : '' %>>Administrador</option>
+                </select>
+              </div>
+              <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">Registrar Usuario</button>
+                <a href="/usuarios" class="btn btn-secondary">Cancelar</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-light text-center text-muted py-3 mt-5">
+    <div class="container">
+      Sistema de Gestión de Pagos Semanales &copy; <%= new Date().getFullYear() %>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

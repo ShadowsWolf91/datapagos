@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DataPagos - Dashboard</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/modern.css">
+</head>
+<body class="dashboard-container">
+  <!-- Barra de navegación -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary modern-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="/dashboard">DataPagos</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard"><i class="bi bi-house-fill"></i> Inicio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/pagos/mis-pagos"><i class="bi bi-cash-coin"></i> Mis Pagos</a>
+          </li>
+          <% if (rol === 'admin') { %>
+          <li class="nav-item">
+            <a class="nav-link" href="/pagos/registrar"><i class="bi bi-plus-circle-fill"></i> Registrar Pago</a>
+          </li>
+          <% } %>
+          <% if (rol === 'admin') { %>
+            <li class="nav-item">
+              <a class="nav-link" href="/pagos"><i class="bi bi-list-check"></i> Todos los Pagos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/pagos/estado"><i class="bi bi-graph-up"></i> Estado de Pagos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/usuarios"><i class="bi bi-people-fill"></i> Usuarios</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/usuarios/registro"><i class="bi bi-person-plus-fill"></i> Registrar Usuario</a>
+            </li>
+          <% } %>
+        </ul>
+        <ul class="navbar-nav">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle"></i> <%= nombre %>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="/logout"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <div class="container mt-4">
+    <!-- Mensajes flash -->
+    <% if(success_msg != '') { %>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <%= success_msg %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% } %>
+
+    <% if(error_msg != '') { %>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <%= error_msg %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% } %>
+
+    <!-- Tarjetas de acceso rápido -->
+    <div class="row mt-4">
+      <div class="col-12">
+        <h2>Bienvenido, <%= nombre %></h2>
+        <p>Panel de control - Rol: <%= rol === 'admin' ? 'Administrador' : 'Usuario Estándar' %></p>
+      </div>
+    </div>
+
+    <div class="row mt-3">
+      <!-- Tarjetas para todos los usuarios -->
+      <div class="col-md-4 mb-3">
+        <div class="card h-100 border-primary dashboard-card">
+          <div class="card-body text-center">
+            <i class="bi bi-cash-coin text-primary" style="font-size: 3rem;"></i>
+            <h5 class="card-title mt-3">Mis Pagos</h5>
+            <p class="card-text">Consulta tu historial de pagos semanales</p>
+            <a href="/pagos/mis-pagos" class="btn btn-primary">Ver Mis Pagos</a>
+          </div>
+        </div>
+      </div>
+
+      <% if (rol === 'admin') { %>
+      <div class="col-md-4 mb-3">
+        <div class="card h-100 border-success dashboard-card">
+          <div class="card-body text-center">
+            <i class="bi bi-plus-circle-fill text-success" style="font-size: 3rem;"></i>
+            <h5 class="card-title mt-3">Registrar Pago</h5>
+            <p class="card-text">Registra un nuevo pago semanal</p>
+            <a href="/pagos/registrar" class="btn btn-success">Registrar Pago</a>
+          </div>
+        </div>
+      </div>
+      <% } %>
+
+      <!-- Tarjetas solo para administradores -->
+      <% if (rol === 'admin') { %>
+        <div class="col-md-4 mb-3">
+          <div class="card h-100 border-info dashboard-card">
+            <div class="card-body text-center">
+              <i class="bi bi-list-check text-info" style="font-size: 3rem;"></i>
+              <h5 class="card-title mt-3">Todos los Pagos</h5>
+              <p class="card-text">Ver todos los pagos registrados</p>
+              <a href="/pagos" class="btn btn-info text-white">Ver Pagos</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <div class="card h-100 border-warning dashboard-card">
+            <div class="card-body text-center">
+              <i class="bi bi-graph-up text-warning" style="font-size: 3rem;"></i>
+              <h5 class="card-title mt-3">Estado de Pagos</h5>
+              <p class="card-text">Consulta el estado de pagos por semana</p>
+              <a href="/pagos/estado" class="btn btn-warning text-white">Ver Estado</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <div class="card h-100 border-danger dashboard-card">
+            <div class="card-body text-center">
+              <i class="bi bi-people-fill text-danger" style="font-size: 3rem;"></i>
+              <h5 class="card-title mt-3">Gestionar Usuarios</h5>
+              <p class="card-text">Administra los usuarios del sistema</p>
+              <a href="/usuarios" class="btn btn-danger">Gestionar</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <div class="card h-100 border-secondary dashboard-card">
+            <div class="card-body text-center">
+              <i class="bi bi-file-earmark-pdf-fill text-secondary" style="font-size: 3rem;"></i>
+              <h5 class="card-title mt-3">Exportar Pagos</h5>
+              <p class="card-text">Exporta todos los pagos a PDF</p>
+              <a href="/pagos/exportar-pdf" class="btn btn-secondary">Exportar PDF</a>
+            </div>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <footer class="bg-light text-center text-muted py-3 mt-5">
+    <div class="container">
+      Sistema de Gestión de Fondos de Financiación ADSO &copy; <%= new Date().getFullYear() %>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
