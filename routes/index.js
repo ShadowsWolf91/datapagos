@@ -32,8 +32,14 @@ router.post('/login', (req, res, next) => {
 router.get('/logout', (req, res) => {
   req.logout(function(err) {
     if (err) { return next(err); }
-    req.flash('success_msg', 'Has cerrado sesión correctamente');
-    res.redirect('/');
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Error al destruir la sesión:', err);
+      }
+      res.clearCookie('connect.sid');
+      req.flash('success_msg', 'Has cerrado sesión correctamente');
+      res.redirect('/');
+    });
   });
 });
 
